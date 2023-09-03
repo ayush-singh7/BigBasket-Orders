@@ -1,7 +1,10 @@
 import {Request, Response, NextFunction} from "express";
 const username = "ayush"
 const password = "12345"
-
+const secretKey = 'secret'
+// to be replaced with config file
+import jwt from "jsonwebtoken";
+import { CustomRequest } from "../interfaces/global.interfaces";
 class Auth {
 
     constructor(){
@@ -22,6 +25,17 @@ class Auth {
             return res.status(401).send('Authentication failed');
         }
     }
+
+    bearerAuth(req:CustomRequest, res:Response, next:NextFunction){
+        const authHeader = req.headers.authorization;
+        if(authHeader){
+            const jwtToken = authHeader.split(' ')[1];
+            const tokenData = jwt.verify(jwtToken,secretKey);
+            req['userData'] = tokenData;
+            next();
+        }
+    }
+
 
 }
 

@@ -18,13 +18,8 @@ export interface HttpResponse extends Response {
 }
 
 export interface CustomRequest extends Request {
-    cognitoUserData?: {
-        [key: string]: any;
-    };
-    userData?: {
-        [key: string]: any;
-    };
-    sessionData?: {
-        [key: string]: any;
-    };
+    
+    
+    userData?: any;
+    sessionData?: any;
 }

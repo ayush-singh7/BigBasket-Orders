@@ -1,7 +1,8 @@
 import { Server } from '@grpc/grpc-js';
 // import { routesV1 } from './v1/v1.routes';
 import { Router } from 'express';
-import { orderControllers } from '../controllers/order.controllers';
+import { orderControllers, applyCoupon } from '../controllers/order.controllers';
+import { auth } from '../middlewares/auth';
 // import { testRoute } from './test.routes';
 
 
@@ -26,9 +27,13 @@ class Routes {
      * @description Load All Routes
      */
     loadAllRoutes() {
-        this.route.post('/place-order', orderControllers.placeOrder);
+
+        this.route.post('/place-order',auth.bearerAuth, orderControllers.placeOrder);
         
+        this.route.post('/apply-coupon',auth.bearerAuth, orderControllers.applyCoupon)
+
         return this.route;
+        
     }
 }
 

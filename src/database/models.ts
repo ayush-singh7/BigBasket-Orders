@@ -1,15 +1,16 @@
 import { string } from 'joi';
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, {Types, Document, Schema } from 'mongoose';
 
 interface Product extends Document {
-  productId:any,
+  productId: Types.ObjectId ,
   productName:string,
 }
 
 interface Order extends Document {
-  userId:any,
+  userId:Types.ObjectId,
   orderStatus:string,
-  productList:Array<Product>
+  productList:Array<Product>,
+  totalAmount:Number
 }
 
 const productSchema  = new Schema<Product>({
@@ -22,7 +23,8 @@ const productSchema  = new Schema<Product>({
 const orderSchema = new Schema<Order>({
   userId: { type:mongoose.Schema.Types.ObjectId,requried:true },
   orderStatus:{type:String},
-  productList: [productSchema]
+  productList: [productSchema],
+  totalAmount: {type:Number}
 });
 
 // Create the User model

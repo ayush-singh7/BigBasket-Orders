@@ -8,11 +8,8 @@ class OrderServices {
     constructor() {
     }
     
-    placeOrder = async(payload:any)=>{
+    placeOrder = async(payload:any, id:string)=>{
         try{
-            console.log(payload,'PL');
-            const id = new mongoose.Types.ObjectId('64db2151f085fd0773961c7f');
-            
             let response = await OrderModel.create({
                 userId: new mongoose.Types.ObjectId(id),
                 orderStatus: payload.orderStatus,
@@ -23,7 +20,21 @@ class OrderServices {
             return Promise.reject(error);
         }
     }
-    
+    applyCoupon = async(payload:any,id:string) =>{
+        try{
+            let _id = new mongoose.Types.ObjectId(id);
+            let totalAmount = await OrderModel.findById({_id:_id},{totalAmount:1});
+            if(totalAmount){
+                let reducedValue = +totalAmount * (1 - payload.percent / 100);
+                let response = await OrderModel.updateOne({_id:_id},{totalAmount:reducedValue})
+                return response;
+            }else{
+                return Promise.reject("Order does not exist")
+            }
+        }catch(error){
+            return Promise.reject(error);
+        }
+    }
     
 
 
