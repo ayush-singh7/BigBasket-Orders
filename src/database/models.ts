@@ -4,6 +4,7 @@ import mongoose, {Types, Document, Schema } from 'mongoose';
 interface Product extends Document {
   productId: Types.ObjectId ,
   productName:string,
+  productCount:number
 }
 
 interface Order extends Document {
@@ -16,6 +17,7 @@ interface Order extends Document {
 const productSchema  = new Schema<Product>({
   productId: { type:mongoose.Schema.Types.ObjectId },
   productName: {type:String, required:true},
+  productCount: {type: Number, required: true}
 })
 
 // const ProductModel = mongoose.model<Product>('Product',productSchema)

@@ -1,41 +1,80 @@
 import { Router, Request, Response } from 'express';
 import OrderModel from '../database/models';
-import { Mongoose,  } from 'mongoose';
-import  mongoose from "mongoose";
+import { Mongoose, } from 'mongoose';
+import mongoose from "mongoose";
 
 class OrderServices {
 
     constructor() {
     }
-    
-    placeOrder = async(payload:any, id:string)=>{
-        try{
+
+    placeOrder = async (payload: any, id: string) => {
+        try {
             let response = await OrderModel.create({
                 userId: new mongoose.Types.ObjectId(id),
                 orderStatus: payload.orderStatus,
                 productList: payload.productList
             });
             return response;
-        }catch(error){
+        } catch (error) {
             return Promise.reject(error);
         }
     }
-    applyCoupon = async(payload:any,id:string) =>{
-        try{
+    applyCoupon = async (payload: any, id: string) => {
+        try {
             let _id = new mongoose.Types.ObjectId(id);
-            let totalAmount = await OrderModel.findById({_id:_id},{totalAmount:1});
-            if(totalAmount){
+            let totalAmount = await OrderModel.findById({ _id: _id }, { totalAmount: 1 });
+            if (totalAmount) {
                 let reducedValue = +totalAmount * (1 - payload.percent / 100);
-                let response = await OrderModel.updateOne({_id:_id},{totalAmount:reducedValue})
+                let response = await OrderModel.updateOne({ _id: _id }, { totalAmount: reducedValue })
                 return response;
-            }else{
+            } else {
                 return Promise.reject("Order does not exist")
             }
-        }catch(error){
+        } catch (error) {
             return Promise.reject(error);
         }
     }
-    
+    updateOrder = async (payload: any, id: string) => {
+        let _id = new mongoose.Types.ObjectId(id);
+        let { status } = payload;
+        try {
+            return await OrderModel.findByIdAndUpdate({ _id: _id }, { orderStatus: status })
+
+        } catch (error) {
+            return Promise.reject(error);
+        }
+
+    }
+
+    fetchCartDetails = async (payload: any, id: string) => {
+        let _id = new mongoose.Types.ObjectId(id);
+        try {
+            return await OrderModel.findOne({ _id: _id });
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    }
+
+    changeCount = async (payload: any, id: string) => {
+        let _id = new mongoose.Types.ObjectId(id);
+        let pipeline = [
+            {
+                $unwind: '$productList',
+                $set: {
+                    "productCount": { $add: ["$productCount", 1] } // Increment count by 5
+                }
+
+            }]
+
+        try {
+            return await OrderModel.aggregate(pipeline);
+
+
+        } catch (error) {
+            return error;
+        }
+    }
 
 
 }

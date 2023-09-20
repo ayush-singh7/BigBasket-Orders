@@ -36,7 +36,32 @@ class OrderControllers {
         }
     }
 
-    
+    updateOrderStatus = async (req: Request, res:Response)=>{
+        try {
+
+            let response = await orderServices.updateOrder(req.body, req.body.userData.userId)
+
+            res.send(response);
+
+        } catch (error) {
+            console.log(error, '---');
+            return Promise.reject(error);
+        }
+    }
+
+    updateCount = async (req: Request, res:Response)=>{
+        try{
+
+            let response = await orderServices.changeCount(req.body, req.body.userData.userId)
+            res.send(response)
+
+        }catch(error){
+            return Promise.reject(error);
+        }
+    }
+
+
+
 
 }
 
